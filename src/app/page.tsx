@@ -3,11 +3,15 @@
 // PublicOS 2.0 - Main Application Page
 
 import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 
 // Dynamically import Map components to avoid SSR issues with Mapbox
 const MapContainer = dynamic(
   () => import('@/components/Map/MapContainer').then((mod) => mod.MapContainer),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => <div className="w-full h-full flex items-center justify-center bg-gray-900 text-cyan-400">Loading Map...</div>
+  }
 );
 
 const ControlPanel = dynamic(
@@ -19,7 +23,9 @@ export default function Home() {
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-gray-900">
       {/* Main Map */}
-      <MapContainer className="w-full h-full" />
+      <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-white">Loading...</div>}>
+        <MapContainer className="w-full h-full" />
+      </Suspense>
 
       {/* Control Panel */}
       <ControlPanel />
